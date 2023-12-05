@@ -14,7 +14,7 @@ const generateButton = document.querySelector('.gif-generate-button');
 generateButton.addEventListener('click', () => {
   const searchTerm = document.querySelector('.gif-search-input').value;
   const resource = generateResource(protocol, url, key, searchTerm);
-  
+
   makeFetchRequest(resource, options);
 });
 
@@ -37,9 +37,12 @@ function generateResource(protocol, url, key, searchTerm) {
   return `${protocol}://${url}?api_key=${key}&s=${searchTerm}`;
 }
 
-function makeFetchRequest(resource, options) {
-  fetch(resource, options)
-    .then((response) => response.json())
-    .then(onFulfilled)
-    .catch(onRejected);
+async function makeFetchRequest(resource, options) {
+  try {
+    const response = await fetch(resource, options);
+    const responseBody = await response.json();
+    onFulfilled(responseBody);
+  } catch {
+    onRejected(err);
+  }
 }
